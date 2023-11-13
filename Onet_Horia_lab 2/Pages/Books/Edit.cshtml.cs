@@ -25,6 +25,7 @@ namespace Onet_Horia_lab_2.Pages.Books
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
+            ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
             if (id == null || _context.Book == null)
             {
                 return NotFound();

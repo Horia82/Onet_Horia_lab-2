@@ -19,14 +19,40 @@ namespace Onet_Horia_lab_2.Pages.Books
             _context = context;
         }
 
-        public IList<Book> Book { get;set; } = default!;
+        public IList<Book> Book { get; set; } = default!;
+        public IEnumerable<Book> BookD { get; set; }
+        public int BookID { get; set; }
+        public int CategoryID { get; set; }
+        public string TitleSort { get; set; }
+        public string AuthorSort { get; set; }
+        public string CurrentFilter { get; set; }
 
-        public async Task OnGetAsync()
+
+
+        public async Task OnGetAsync(int? id, int? categoryID, string sortOrder, string searchString)
         {
-            if (_context.Book != null)
+            // using System;
+            TitleSort = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            CurrentFilter = searchString;
+            BookD = await _context.Book
+           .Include(b => b.Publisher)
+           .AsNoTracking()
+           .OrderBy(b => b.Title)
+           .ToListAsync();
+            if (!String.IsNullOrEmpty(searchString))
             {
-                Book = await _context.Book.ToListAsync();
+                BookD = BookD.Where(s=> s.Title.Contains(searchString));
+            }
+            if (id != null)
+            {
+                BookID = id.Value;
+                Book book = BookD.Where(i => i.ID == id.Value).Single();
+               
             }
         }
+
     }
 }
+
+        
+       

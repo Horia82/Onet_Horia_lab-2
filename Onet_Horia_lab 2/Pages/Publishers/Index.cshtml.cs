@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Onet_Horia_lab_2.Data;
 using Onet_Horia_lab_2.Models;
+using Onet_Horia_lab_2.Models.ViewModels;
 
 namespace Onet_Horia_lab_2.Pages.Publishers
 {
@@ -21,11 +22,22 @@ namespace Onet_Horia_lab_2.Pages.Publishers
 
         public IList<Publisher> Publisher { get;set; } = default!;
 
-        public async Task OnGetAsync()
+        public PublisherIndexData PublisherData { get; set; }
+        public int PublisherID { get; set; }
+        public int BookID { get; set; }
+        public async Task OnGetAsync(int? id, int? bookID)
         {
-            if (_context.Publisher != null)
+            PublisherData = new PublisherIndexData();
+            PublisherData.Publishers = await _context.Publisher
+            .Include(i => i.Books)
+            .OrderBy(i => i.PublisherName)
+            .ToListAsync();
+            if (id != null)
             {
-                Publisher = await _context.Publisher.ToListAsync();
+                PublisherID = id.Value;
+                Publisher publisher = PublisherData.Publishers
+                .Where(i => i.ID == id.Value).Single();
+                PublisherData.Books = publisher.Books;
             }
         }
     }

@@ -21,6 +21,7 @@ namespace Onet_Horia_lab_2.Pages.Books
 
         public IActionResult OnGet()
         {
+            ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID","PublisherName");
             return Page();
         }
 
